@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>list_files ('L:/0000', ['files','follow_links'], ImageFiles)</l>
+<l>tuple_regexp_select (ImageFiles, ['\\.(tif|tiff|gif|bmp|jpg|jpeg|jp2|png|pcx|pgm|ppm|pbm|xwd|ima|hobj)$','ignore_case'], ImageFiles)</l>
+<l>dev_open_window (0, 0, 512, 512, 'black', WindowHandle)</l>
+<l>for Index := 3  to |ImageFiles| - 1 by 1</l>
+<l>    a:=ImageFiles[Index]</l>
+<l>    read_image (Image, ImageFiles[Index])</l>
+<l>    get_image_size (Image, Width, Height)</l>
+<c>    </c>
+<l>    *binary_threshold (Image, Region, 'max_separability', 'dark', UsedThreshold)</l>
+<l>    threshold (Image, Region, 70, 160)</l>
+<l>    region_features (Region, 'width', W)</l>
+<l>    region_features (Region, 'height', H)</l>
+<l>    *zoom_region (Region, Region, 1/11.46, 1/12.14)</l>
+<l>    area_center (Region, Area, Row, Column)</l>
+<l>    mirror_region (Region, RegionMirror, 'row', Row*2)</l>
+<l>    connection (RegionMirror, ConnectedRegions)</l>
+<l>    gen_contour_region_xld (ConnectedRegions, Contours, 'border_holes')</l>
+<l>    convexity_xld (Contours, Convexity)</l>
+<l>    segment_contours_xld (Contours, ContoursSplit, 'lines_circles', 5, 4, 2)</l>
+<l>    dev_clear_window ()</l>
+<l>    dev_display (ContoursSplit)</l>
+<l>    write_contour_xld_dxf (ContoursSplit, ImageFiles[Index])</l>
+<l>   gen_polygons_xld (ContoursSplit, Polygons, 'ramer',0.1)</l>
+<l>   write_polygon_xld_dxf (Polygons, ImageFiles[Index])</l>
+<l>endfor</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
